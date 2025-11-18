@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+
+    <!-- LEFT SIDE: User Info -->
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+
+          <!-- PROFILE IMAGE -->
+          {% if profile_user.profile.profile_picture %}
+            <img src="{{ profile_user.profile.profile_picture.url }}"
+                 class="img-fluid rounded-circle mb-3"
+                 style="width:150px; height:150px; object-fit:cover;">
+          {% else %}
+            <img src="https://via.placeholder.com/150"
+                 class="img-fluid rounded-circle mb-3">
+          {% endif %}
+
+          <h4>{{ profile_user.username }}</h4>
+
+          <p><strong>Date of Birth:</strong> {{ profile_user.profile.date_of_birth|default:"N/A" }}</p>
+          <p><strong>Address:</strong> {{ profile_user.profile.address|default:"N/A" }}</p>
+
+          {% if request.user == profile_user %}
+            <a href="{% url 'change_username' %}" class="btn btn-primary btn-sm mt-2">Change Username</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: Posts + Likes -->
+    <div class="col-md-8">
+
+      <!-- User Posts -->
+      <h4 class="mt-3">Posts</h4>
+      {% for post in posts %}
+        <div class="card mb-3 shadow-sm">
+          <div class="card-body">
+            <p class="card-text">{{ post.content }}</p>
+            <small class="text-muted">Posted on {{ post.created_at }}</small>
+          </div>
+        </div>
+      {% empty %}
+        <p>No posts yet.</p>
+      {% endfor %}
+
+      <!-- Liked Posts -->
+      <h4 class="mt-4">Liked Posts</h4>
+      {% for like in likes %}
+        <div class="card mb-3 shadow-sm">
+          <div class="card-body">
+            <p class="card-text">{{ like.post.content }}</p>
+            <small class="text-muted">
+              Posted by: {{ like.post.user.username }} on {{ like.post.created_at }}
+            </small>
+          </div>
+        </div>
+      {% empty %}
+        <p>No liked posts yet.</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}
